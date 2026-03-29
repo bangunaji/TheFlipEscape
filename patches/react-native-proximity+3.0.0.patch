@@ -1,6 +1,0 @@
-diff --git a/node_modules/react-native-proximity/android/build.gradle b/node_modules/react-native-proximity/android/build.gradle
---- a/node_modules/react-native-proximity/android/build.gradle
-+++ b/node_modules/react-native-proximity/android/build.gradle
-@@ -34,1 +34,1 @@
--    compile "com.facebook.react:react-native:+"
-+    implementation "com.facebook.react:react-native:+"
