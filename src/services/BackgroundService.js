@@ -1,10 +1,8 @@
 import { accelerometer, setUpdateIntervalForType, SensorTypes } from 'react-native-sensors';
 import BackgroundJob from 'react-native-background-actions';
-import { Vibration, AppState, NativeEventEmitter, NativeModules } from 'react-native';
-import Proximity from 'react-native-proximity';
+import { Vibration, AppState, DeviceEventEmitter } from 'react-native';
 
-// Dummy event emitter for simple communication with App UI
-const serviceEvents = new NativeEventEmitter(NativeModules.ServiceEvents);
+// No dummy emitter needed, using DeviceEventEmitter directly for proximity
 
 let faceDownStartTime = 0;
 let isTimerStarted = 0;
@@ -68,8 +66,8 @@ class BackgroundService {
       this.handleSensorUpdate(z);
     });
 
-    // Proximity sensor listener
-    this.proxySubscription = Proximity.addListener((data) => {
+    // Proximity sensor listener (Native Module)
+    this.proxySubscription = DeviceEventEmitter.addListener('proximityChanged', (data) => {
       lastProximityStatus = data.proximity;
     });
 
