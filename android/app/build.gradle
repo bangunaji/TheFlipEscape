@@ -51,10 +51,13 @@ android {
 
 dependencies {
     implementation("com.facebook.react:react-android")
-    if (hermesEnabled.toBoolean()) {
+
+    def isHermesEnabled = project.ext.has("hermesEnabled") ? project.ext.get("hermesEnabled").toBoolean() : true
+
+    if (isHermesEnabled) {
         implementation("com.facebook.react:hermes-android")
     } else {
-        implementation jscFlavor
+        implementation("org.webkit:android-jsc:+")
     }
 }
 
