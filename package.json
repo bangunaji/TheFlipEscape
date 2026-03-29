@@ -29,7 +29,6 @@
     "@types/react-test-renderer": "^18.0.0",
     "babel-jest": "^29.2.1",
     "eslint": "^8.19.0",
-    "metronome": "^0.1.0",
     "patch-package": "^8.0.0",
     "prettier": "^2.4.1",
     "react-test-renderer": "18.2.0",
