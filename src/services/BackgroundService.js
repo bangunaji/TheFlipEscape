@@ -13,8 +13,8 @@ const options = {
   taskTitle: 'The Flip-Escape Running',
   taskDesc: 'Monitoring sensors for discrete exit trigger...',
   taskIcon: {
-    name: 'ic_notification',
-    type: 'drawable',
+    name: 'ic_launcher',
+    type: 'mipmap',
   },
   color: '#6200EE',
   type: 'dataSync',
