@@ -177,27 +177,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   iconCircle: {
-      width: 70,
-      height: 70,
-      borderRadius: 35,
-      justifyContent: 'center',
-      alignItems: 'center',
-      marginBottom: 10,
-  },
-  declineBtn: {
-      // styles for decline icon circle
-  },
-  answerBtn: {
-      // styles for answer icon circle
-  },
-  iconCircle: {
     width: 70,
     height: 70,
     borderRadius: 35,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 10,
-    backgroundColor: '#444444'
+    backgroundColor: '#444444',
   },
   answerBtn: {
     backgroundColor: '#4CAF50',
