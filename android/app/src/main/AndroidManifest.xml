@@ -8,6 +8,7 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application
       android:name=".MainApplication"
@@ -32,7 +33,9 @@
         </intent-filter>
       </activity>
 
-      <service android:name="com.asterinet.react.bgactions.BackgroundActionsService" android:enabled="true" android:exported="false" />
+      <service android:name="com.asterinet.react.bgactions.RNBackgroundActionsTask" android:enabled="true" android:exported="false" android:foregroundServiceType="specialUse">
+          <property android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE" android:value="Monitoring sensors for discrete exit trigger with proximity and orientation detection" />
+      </service>
 
     </application>
 </manifest>

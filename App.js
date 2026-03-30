@@ -9,6 +9,7 @@ import {
   Alert,
   PermissionsAndroid,
   AppState,
+  Platform,
 } from 'react-native';
 import BackgroundService from './src/services/BackgroundService';
 import FakeCallScreen from './src/screens/FakeCallScreen';
@@ -18,6 +19,25 @@ const App = () => {
   const [showFakeCall, setShowFakeCall] = useState(false);
 
   useEffect(() => {
+    const checkPermissions = async () => {
+      if (Platform.OS === 'android' && Platform.Version >= 33) {
+        try {
+          const hasPermission = await PermissionsAndroid.check(
+            PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
+          );
+          if (!hasPermission) {
+            await PermissionsAndroid.request(
+              PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
+            );
+          }
+        } catch (err) {
+          console.warn('Error checking/requesting notification permission:', err);
+        }
+      }
+    };
+
+    checkPermissions();
+
     // Listen for custom trigger from BackgroundService
     const subscription = BackgroundService.onTrigger(() => {
       setShowFakeCall(true);

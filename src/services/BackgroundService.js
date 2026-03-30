@@ -43,13 +43,23 @@ class BackgroundService {
   static triggerCallback = null;
 
   async start() {
-    if (this.isActive) return true;
+    if (this.isActive) {
+      console.log('BackgroundService is already active.');
+      return true;
+    }
     try {
+      console.log('Starting BackgroundJob with options:', options);
       await BackgroundJob.start(this.backgroundTask, options);
       this.isActive = true;
+      console.log('BackgroundJob started successfully.');
       return true;
     } catch (e) {
-      console.error(e);
+      console.error('Failed to start BackgroundJob:', e);
+      // Log more details if available
+      if (e instanceof Error) {
+        console.error('Error message:', e.message);
+        console.error('Error stack:', e.stack);
+      }
       return false;
     }
   }
