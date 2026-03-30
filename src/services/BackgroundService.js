@@ -13,11 +13,11 @@ const options = {
   taskTitle: 'The Flip-Escape Running',
   taskDesc: 'Monitoring sensors for discrete exit trigger...',
   taskIcon: {
-    name: 'ic_launcher',
+    name: 'ic_notification',
     type: 'drawable',
   },
   color: '#6200EE',
-  type: 'dataSync', // Ensure this matches AndroidManifest.xml
+  type: 'dataSync',
   channelId: 'the_flip_escape_channel',
   channelName: 'The Flip-Escape Service',
   parameters: {
@@ -69,7 +69,11 @@ class BackgroundService {
       // Some versions of Android require explicit permission check for FOREGROUND_SERVICE_DATA_SYNC
       // although it's a normal permission.
       
-      this.log('Step 2: Calling BackgroundJob.start()...');
+      this.log('Step 2: Calling BackgroundJob.start() with 500ms safety delay...');
+      
+      // Delay to ensure any UI thread activities (button animations, etc) are finished
+      await sleep(500);
+      
       await BackgroundJob.start(this.backgroundTask, options);
       
       this.isActive = true;
