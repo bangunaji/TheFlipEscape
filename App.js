@@ -14,8 +14,10 @@ import {
 } from 'react-native';
 import BackgroundService from './src/services/BackgroundService';
 import FakeCallScreen from './src/screens/FakeCallScreen';
+import PermissionGateway from './src/screens/PermissionGateway';
 
 const App = () => {
+  const [permissionsGranted, setPermissionsGranted] = useState(false);
   const [isActive, setIsActive] = useState(false);
   const [showFakeCall, setShowFakeCall] = useState(false);
   const [logs, setLogs] = useState([]);
@@ -27,24 +29,7 @@ const App = () => {
   };
 
   useEffect(() => {
-    const checkPermissions = async () => {
-      if (Platform.OS === 'android' && Platform.Version >= 33) {
-        try {
-          const hasPermission = await PermissionsAndroid.check(
-            PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
-          );
-          if (!hasPermission) {
-            await PermissionsAndroid.request(
-              PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
-            );
-          }
-        } catch (err) {
-          console.warn('Error checking/requesting notification permission:', err);
-        }
-      }
-    };
-
-    checkPermissions();
+    // Permission check moved to PermissionGateway.js
 
     // Set logger for BackgroundService
     BackgroundService.setLogger(addLog);
@@ -96,11 +81,19 @@ const App = () => {
       setIsActive(false);
       Alert.alert(
         'Background Service Error',
-        `The service failed to start: ${errorMsg}\n\nIf the app crashed, check if all permissions are granted.`,
+        `The service failed to start: ${errorMsg}\n\nCheck if Battery Restrictions are removed.`,
         [{ text: 'OK' }]
       );
     }
   };
+
+  if (!permissionsGranted) {
+    return (
+      <PermissionGateway 
+        onPermissionsGranted={() => setPermissionsGranted(true)}
+      />
+    );
+  }
 
   if (showFakeCall) {
     return (
