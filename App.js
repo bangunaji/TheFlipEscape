@@ -74,21 +74,31 @@ const App = () => {
   };
 
   const toggleService = async () => {
-    if (!isActive) {
-      addLog('Starting service...');
-      const success = await BackgroundService.start();
-      if (success) {
-        addLog('Service started successfully!');
-        setIsActive(true);
+    try {
+      if (!isActive) {
+        addLog('Attempting to start service...');
+        const success = await BackgroundService.start();
+        if (success) {
+          addLog('Service is now ACTIVE.');
+          setIsActive(true);
+        } else {
+          addLog('ERROR: Service start returned false (unknown reason).');
+        }
       } else {
-        addLog('ERROR: Failed to start service.');
-        Alert.alert('Error', 'Failed to start Background Service. Check logs below.');
+        addLog('Stopping service...');
+        await BackgroundService.stop();
+        addLog('Service stopped.');
+        setIsActive(false);
       }
-    } else {
-      addLog('Stopping service...');
-      await BackgroundService.stop();
-      addLog('Service stopped.');
+    } catch (err) {
+      const errorMsg = err.message || 'Unknown crash';
+      addLog(`FATAL ERROR: ${errorMsg}`);
       setIsActive(false);
+      Alert.alert(
+        'Background Service Error',
+        `The service failed to start: ${errorMsg}\n\nIf the app crashed, check if all permissions are granted.`,
+        [{ text: 'OK' }]
+      );
     }
   };
 

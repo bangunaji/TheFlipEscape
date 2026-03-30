@@ -17,7 +17,7 @@ const options = {
     type: 'drawable',
   },
   color: '#6200EE',
-  type: 'dataSync',
+  type: 'dataSync', // Ensure this matches AndroidManifest.xml
   channelId: 'the_flip_escape_channel',
   channelName: 'The Flip-Escape Service',
   parameters: {
@@ -62,22 +62,30 @@ class BackgroundService {
       return true;
     }
     try {
-      this.log('Initializing BackgroundJob...');
-      this.log(`Options: ${JSON.stringify(options, null, 2)}`);
+      this.log('Step 1: Preparing to start BackgroundJob...');
+      this.log(`Channel: ${options.channelId}, Name: ${options.channelName}`);
+      this.log(`Icon: ${options.taskIcon.name}, Type: ${options.taskIcon.type}`);
       
+      // Some versions of Android require explicit permission check for FOREGROUND_SERVICE_DATA_SYNC
+      // although it's a normal permission.
+      
+      this.log('Step 2: Calling BackgroundJob.start()...');
       await BackgroundJob.start(this.backgroundTask, options);
       
       this.isActive = true;
-      this.log('BackgroundJob started successfully.');
+      this.log('Step 3: BackgroundJob.start() completed successfully.');
       return true;
     } catch (e) {
-      this.log(`ERROR: ${e.message}`);
+      this.isActive = false;
+      const errorMsg = `CRITICAL ERROR: ${e.message}`;
+      this.log(errorMsg);
       if (e.stack) {
-        this.log(`Stack: ${e.stack.split('\n')[0]}...`);
+        this.log(`Trace: ${e.stack.split('\n')[0]}`);
       }
       
-      console.error('Failed to start BackgroundJob:', e);
-      return false;
+      console.error('BackgroundJob start crash:', e);
+      // Re-throw to inform UI
+      throw e;
     }
   }
 
@@ -89,44 +97,53 @@ class BackgroundService {
   }
 
   backgroundTask = async (taskData) => {
-    // Accelerometer config
-    setUpdateIntervalForType(SensorTypes.accelerometer, 500);
-    this.subscription = accelerometer.subscribe(({ z }) => {
-      this.handleSensorUpdate(z);
-    });
+    try {
+      this.log('Background task loop starting...');
+      
+      // Accelerometer config
+      this.log('Subscribing to Accelerometer...');
+      setUpdateIntervalForType(SensorTypes.accelerometer, 500);
+      this.subscription = accelerometer.subscribe(({ z }) => {
+        this.handleSensorUpdate(z);
+      });
 
-    // Proximity sensor listener (Native Module)
-    this.proxySubscription = DeviceEventEmitter.addListener('proximityChanged', (data) => {
-      lastProximityStatus = data.proximity;
-    });
+      // Proximity sensor listener (Native Module)
+      this.log('Subscribing to ProximityModule...');
+      this.proxySubscription = DeviceEventEmitter.addListener('proximityChanged', (data) => {
+        lastProximityStatus = data.proximity;
+      });
 
-    // Update AppState listener for unlock detection
-    const appStateListener = AppState.addEventListener('change', nextAppState => {
-      if (appStateVisible.match(/inactive|background/) && nextAppState === 'active') {
-        // App became active (phone likely unlocked)
+      // Update AppState listener for unlock detection
+      const appStateListener = AppState.addEventListener('change', nextAppState => {
+        if (appStateVisible.match(/inactive|background/) && nextAppState === 'active') {
+          if (this.timerCountdown > 0) {
+            this.log('Unlock detected! Cancelling countdown.');
+            this.timerCountdown = 0;
+            this.fakeCallTriggered = false;
+          }
+        }
+        appStateVisible = nextAppState;
+      });
+
+      this.log('Entering main loop...');
+      while (BackgroundJob.isRunning()) {
         if (this.timerCountdown > 0) {
-          console.log('Unlock detected! Cancelling fake call countdown.');
-          this.timerCountdown = 0;
-          this.fakeCallTriggered = false;
+          this.timerCountdown--;
+          if (this.timerCountdown === 0) {
+            this.executeFakeCall();
+          }
         }
+        await sleep(1000);
       }
-      appStateVisible = nextAppState;
-    });
-
-    while (BackgroundJob.isRunning()) {
-      if (this.timerCountdown > 0) {
-        this.timerCountdown--;
-        if (this.timerCountdown === 0) {
-          this.executeFakeCall();
-        }
-      }
-      await sleep(1000);
+      
+      this.log('Background task loop exiting cleanup...');
+      this.subscription?.unsubscribe();
+      this.proxySubscription?.remove();
+      appStateListener.remove();
+    } catch (err) {
+      this.log(`LOOP ERROR: ${err.message}`);
+      console.error('Background task crash:', err);
     }
-
-    // Cleanup when stopped
-    this.subscription?.unsubscribe();
-    this.proxySubscription?.remove();
-    appStateListener.remove();
   };
 
   handleSensorUpdate(z) {
