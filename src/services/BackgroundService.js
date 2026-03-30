@@ -10,7 +10,6 @@ let lastProximityStatus = false;
 let appStateVisible = AppState.currentState;
 
 const options = {
-  taskName: 'TheFlipEscapeBackground',
   taskTitle: 'The Flip-Escape Running',
   taskDesc: 'Monitoring sensors for discrete exit trigger...',
   taskIcon: {
@@ -18,6 +17,7 @@ const options = {
     type: 'drawable',
   },
   color: '#6200EE',
+  type: 'dataSync',
   parameters: {
     delay: 1000,
   },
