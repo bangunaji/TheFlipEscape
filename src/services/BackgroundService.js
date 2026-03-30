@@ -15,7 +15,7 @@ const options = {
   taskDesc: 'Monitoring sensors for discrete exit trigger...',
   taskIcon: {
     name: 'ic_launcher',
-    type: 'mipmap',
+    type: 'drawable',
   },
   color: '#6200EE',
   parameters: {
