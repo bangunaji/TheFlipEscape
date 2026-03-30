@@ -32,6 +32,18 @@ class BackgroundService {
     this.fakeCallTriggered = false;
     this.timerCountdown = 0;
     this.isActive = false;
+    this.logger = null;
+  }
+
+  setLogger(loggerCallback) {
+    this.logger = loggerCallback;
+  }
+
+  log(msg) {
+    if (this.logger) {
+      this.logger(msg);
+    }
+    console.log(`[BackgroundService] ${msg}`);
   }
 
   onTrigger(callback) {
@@ -44,29 +56,34 @@ class BackgroundService {
 
   async start() {
     if (this.isActive) {
-      console.log('BackgroundService is already active.');
+      this.log('Service is already active.');
       return true;
     }
     try {
-      console.log('Starting BackgroundJob with options:', options);
+      this.log('Initializing BackgroundJob...');
+      this.log(`Options: ${JSON.stringify(options, null, 2)}`);
+      
       await BackgroundJob.start(this.backgroundTask, options);
+      
       this.isActive = true;
-      console.log('BackgroundJob started successfully.');
+      this.log('BackgroundJob started successfully.');
       return true;
     } catch (e) {
-      console.error('Failed to start BackgroundJob:', e);
-      // Log more details if available
-      if (e instanceof Error) {
-        console.error('Error message:', e.message);
-        console.error('Error stack:', e.stack);
+      this.log(`ERROR: ${e.message}`);
+      if (e.stack) {
+        this.log(`Stack: ${e.stack.split('\n')[0]}...`);
       }
+      
+      console.error('Failed to start BackgroundJob:', e);
       return false;
     }
   }
 
   async stop() {
+    this.log('Stopping service...');
     this.isActive = false;
     await BackgroundJob.stop();
+    this.log('Service stopped.');
   }
 
   backgroundTask = async (taskData) => {
@@ -133,7 +150,7 @@ class BackgroundService {
     // Vibration confirmation: 2 short pulses (0.2s)
     Vibration.vibrate([0, 200, 200, 200]);
     
-    console.log('Trigger success! 2x vibration sent. Delay 45s starts.');
+    this.log('Trigger success! 2x vibration sent. Delay 45s starts.');
   }
 
   executeFakeCall() {
