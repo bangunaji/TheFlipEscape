@@ -143,7 +143,7 @@ const App = () => {
               <Text style={styles.logPlaceHolder}>No logs yet...</Text>
             ) : (
               logs.map((log, index) => (
-                <Text key={index} style={[styles.logText, log.includes('ERROR') && {color: '#FF5252'}]}>
+                <Text key={index} selectable={true} style={[styles.logText, log.includes('ERROR') && {color: '#FF5252'}]}>
                   {log}
                 </Text>
               ))
