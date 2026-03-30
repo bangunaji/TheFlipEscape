@@ -12,12 +12,10 @@ let appStateVisible = AppState.currentState;
 const options = {
   taskTitle: 'The Flip-Escape Running',
   taskDesc: 'Monitoring sensors for discrete exit trigger...',
-  taskIcon: {
-    name: 'ic_notification',
-    type: 'drawable',
-  },
   color: '#6200EE',
   type: 'dataSync',
+  channelId: 'the_flip_escape_channel',
+  channelName: 'The Flip-Escape Service',
   parameters: {
     delay: 1000,
   },
