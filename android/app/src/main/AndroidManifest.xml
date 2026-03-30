@@ -39,8 +39,10 @@
           android:name="com.asterinet.react.bgactions.RNBackgroundActionsTask" 
           android:enabled="true" 
           android:exported="false" 
-          android:foregroundServiceType="dataSync"
+          android:foregroundServiceType="specialUse"
           tools:node="replace">
+          <property android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                    android:value="Monitoring IMU sensors for safety trigger." />
       </service>
 
     </application>
