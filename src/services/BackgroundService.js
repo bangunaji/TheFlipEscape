@@ -13,15 +13,13 @@ const options = {
   taskTitle: 'The Flip-Escape Running',
   taskDesc: 'Monitoring sensors for discrete exit trigger...',
   taskIcon: {
-    name: 'ic_launcher', // Menggunakan ikon bawaan aplikasi
-    type: 'mipmap',      // Folder standar ikon di Android
+    name: 'ic_launcher', // Nama file .xml di folder drawable
+    type: 'drawable',    // WAJIB 'drawable' karena file ic_launcher berbentuk .xml
   },
   color: '#6200EE',
-  type: 'dataSync',      // Penting untuk kompatibilitas Android 14
+  type: 'dataSync',
   parameters: {
     delay: 1000,
-    notificationChannelId: 'the_flip_escape_channel', // Harus unik
-    notificationChannelName: 'Flip Escape Service', // Nama yang muncul di setting
   },
 };
 
@@ -63,7 +61,6 @@ class BackgroundService {
     }
     try {
       this.log('Step 1: Preparing to start BackgroundJob...');
-      this.log(`Channel: ${options.channelId}, Name: ${options.channelName}`);
       this.log(`Icon: ${options.taskIcon.name}, Type: ${options.taskIcon.type}`);
       
       // Some versions of Android require explicit permission check for FOREGROUND_SERVICE_DATA_SYNC
