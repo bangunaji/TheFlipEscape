@@ -1,5 +1,5 @@
 import { accelerometer, setUpdateIntervalForType, SensorTypes } from 'react-native-sensors';
-import notifee, { AndroidImportance } from '@notifee/react-native';
+import notifee, { AndroidImportance, AndroidForegroundServiceType } from '@notifee/react-native';
 import { Vibration, AppState, DeviceEventEmitter } from 'react-native';
 
 // No dummy emitter needed, using DeviceEventEmitter directly for proximity
@@ -72,7 +72,7 @@ class BackgroundService {
           color: '#6200EE',
           smallIcon: 'ic_notification', 
           ongoing: true,
-          foregroundServiceTypes: ['dataSync'] // Wajib untuk Android 14
+          foregroundServiceTypes: [AndroidForegroundServiceType.FOREGROUND_SERVICE_TYPE_DATA_SYNC], // Memperbaiki enum Notifee
         },
       });
       
