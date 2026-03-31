@@ -11,7 +11,7 @@ let appStateVisible = AppState.currentState;
 
 const options = {
   taskTitle: 'The Flip-Escape Running',
-  taskDesc: 'Monitoring sensors...',
+  taskDesc: 'Monitoring sensors for discrete exit trigger...',
   taskIcon: {
     name: 'ic_launcher', // Menggunakan ikon bawaan aplikasi
     type: 'mipmap',      // Folder standar ikon di Android
@@ -20,6 +20,8 @@ const options = {
   type: 'dataSync',      // Penting untuk kompatibilitas Android 14
   parameters: {
     delay: 1000,
+    notificationChannelId: 'the_flip_escape_channel', // Harus unik
+    notificationChannelName: 'Flip Escape Service', // Nama yang muncul di setting
   },
 };
 
