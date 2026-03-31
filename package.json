@@ -11,10 +11,10 @@
     "postinstall": "patch-package"
   },
   "dependencies": {
+    "@notifee/react-native": "^9.1.8",
     "react": "18.2.0",
     "react-native": "0.72.6",
     "react-native-sensors": "^7.3.6",
-    "react-native-background-actions": "^3.0.1",
     "react-native-sound": "^0.11.1"
   },
   "devDependencies": {
