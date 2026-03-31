@@ -11,6 +11,7 @@ import {
   AppState,
   Platform,
   ScrollView,
+  Clipboard,
 } from 'react-native';
 import BackgroundService from './src/services/BackgroundService';
 import FakeCallScreen from './src/screens/FakeCallScreen';
@@ -137,9 +138,23 @@ const App = () => {
         <View style={styles.logContainer}>
           <View style={styles.logHeader}>
             <Text style={styles.logTitle}>Debug Logs</Text>
-            <TouchableOpacity onPress={() => setLogs([])}>
-              <Text style={styles.clearText}>Clear</Text>
-            </TouchableOpacity>
+            <View style={styles.logActions}>
+              <TouchableOpacity
+                onPress={() => {
+                  if (logs.length === 0) {
+                    Alert.alert('Copy Logs', 'Tidak ada log untuk disalin.');
+                    return;
+                  }
+                  Clipboard.setString(logs.join('\n'));
+                  Alert.alert('✅ Tersalin!', `${logs.length} baris log berhasil disalin ke clipboard.`);
+                }}
+                style={styles.copyButton}>
+                <Text style={styles.copyText}>Copy</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => setLogs([])}>
+                <Text style={styles.clearText}>Clear</Text>
+              </TouchableOpacity>
+            </View>
           </View>
           <ScrollView style={styles.logScroll}>
             {logs.length === 0 ? (
@@ -270,10 +285,29 @@ const styles = StyleSheet.create({
   logHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    alignItems: 'center',
     marginBottom: 5,
     borderBottomWidth: 1,
     borderBottomColor: '#333333',
     paddingBottom: 5,
+  },
+  logActions: {
+    flexDirection: 'row',
+    gap: 12,
+    alignItems: 'center',
+  },
+  copyButton: {
+    backgroundColor: 'rgba(98, 0, 238, 0.25)',
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 4,
+    borderWidth: 1,
+    borderColor: '#6200EE',
+  },
+  copyText: {
+    color: '#BB86FC',
+    fontSize: 10,
+    fontWeight: 'bold',
   },
   logTitle: {
     color: '#6200EE',
